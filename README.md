@@ -2,6 +2,11 @@
 
 ![Project cover — as shown on Upwork](screenshots/upwork-cover.png)
 
+## Demo video
+
+<video src="demo.mp4" controls width="100%"></video>
+
+
 ---
 
 # Bean & Roast Co. — Small-Business Database, Designed & Built
