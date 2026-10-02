@@ -1,6 +1,6 @@
 > **Live demo:** [https://coffee-shop-sql.vercel.app](https://coffee-shop-sql.vercel.app)
 
-![Demo screenshot](screenshots/desktop-hero.png)
+![Project cover — as shown on Upwork](screenshots/upwork-cover.png)
 
 ---
 
