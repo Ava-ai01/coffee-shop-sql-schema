@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bean &amp; Roast Co. — SQL Database Design Case Study</title>
+  <meta name="description" content="Case study: a complete SQLite database for a coffee shop — 8 tables, realistic seed data, and 10 ready-made reporting queries answering the questions owners actually ask." />
+  <link rel="canonical" href="https://samson.example/portfolio/sql-business-schema/" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Bean &amp; Roast Co. — SQL Database Design Case Study" />
+  <meta property="og:description" content="8 tables, 10 ready-made reports. A coffee shop's data, designed so any business question is answered in seconds." />
+  <meta property="og:image" content="https://samson.example/portfolio/sql-business-schema/screenshots/desktop-hero.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "CreativeWork",
+    "name": "Bean & Roast Co. — Small-Business SQL Database",
+    "description": "Relational database design for a specialty coffee shop: 8 tables, seed data, and 10 reporting queries.",
+    "creator": { "@type": "Person", "name": "Samson" },
+    "keywords": "SQL, database design, SQLite, data reporting"
+  }
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="showcase.css" />
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="nav" aria-label="Primary">
+    <a class="brand" href="#top">Samson <span class="brand-sep">/</span> Data</a>
+    <div class="nav-links">
+      <a href="#schema">Schema</a>
+      <a href="#queries">Queries</a>
+      <a href="#questions">Questions</a>
+    </div>
+    <a class="btn btn-primary btn-sm" href="#contact">Design my database</a>
+  </nav>
+</header>
+
+<main id="top">
+
+  <!-- ============ HERO ============ -->
+  <section class="hero">
+    <div class="wrap">
+      <p class="kicker reveal">Portfolio &middot; SQL database design</p>
+      <h1 class="reveal">Ten business questions.<br /><em>Answered in seconds.</em></h1>
+      <p class="lede reveal">
+        A complete, working database for <strong>Bean &amp; Roast Co.</strong>, a
+        specialty coffee shop that also sells beans and brewing gear online.
+        Clean schema, realistic data, and ten ready-made reports —
+        the kind of thing I'd build for your business.
+      </p>
+      <div class="hero-cta reveal">
+        <a class="btn btn-primary" href="#contact">Design my database</a>
+        <a class="quiet-link" href="#schema">See the schema &rarr;</a>
+      </div>
+      <dl class="stats reveal">
+        <div><dt>8</dt><dd>tables</dd></div>
+        <div><dt>10</dt><dd>ready-made reports</dd></div>
+        <div><dt>66</dt><dd>orders, 3 months</dd></div>
+        <div><dt>94.4%</dt><dd>repeat-customer rate</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <!-- ============ PROBLEM ============ -->
+  <section class="problem">
+    <div class="wrap split">
+      <div class="reveal">
+        <p class="kicker">The problem</p>
+        <h2>Running on gut feel</h2>
+      </div>
+      <div class="reveal">
+        <p>
+          Most small businesses know their numbers live <em>somewhere</em> —
+          in receipts, inventory sheets, a payroll folder. But asking
+          &ldquo;which products actually make money?&rdquo; means an evening
+          with a spreadsheet. So the questions go unanswered, and decisions
+          stay guesses.
+        </p>
+        <p>
+          Bean &amp; Roast Co. had the same problem. I gave it one database
+          where every sale, product, customer, and expense lives together —
+          so the owner asks, and the answer is instant.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SCHEMA ============ -->
+  <section class="schema" id="schema">
+    <div class="wrap">
+      <p class="kicker reveal">The schema</p>
+      <h2 class="reveal">Eight tables. <em>Every relationship accounted for.</em></h2>
+      <p class="section-lede reveal">
+        Primary and foreign keys, <code>NOT NULL</code> and <code>CHECK</code>
+        constraints, and indexes on the columns reports actually filter on.
+        Prices are stored as integer cents — never floats.
+      </p>
+
+      <div class="er-scroll reveal">
+        <svg class="er" viewBox="0 0 1200 660" role="img"
+             aria-label="Entity-relationship diagram of the Bean and Roast Co. database: eight tables showing primary keys, foreign keys, and one-to-many relationships">
+          <defs>
+            <marker id="crow" markerWidth="10" markerHeight="12" refX="8" refY="6" orient="auto">
+              <path d="M1,1 L9,6 L1,11 Z" fill="#e2a93d" />
+            </marker>
+          </defs>
+
+          <!-- relationship lines -->
+          <g class="rels" stroke="#e2a93d" stroke-width="1.5" fill="none" opacity="0.85">
+            <path d="M 160 220 V 300 H 390 V 420" marker-end="url(#crow)"/>
+            <path d="M 455 220 V 420" marker-end="url(#crow)"/>
+            <path d="M 580 500 H 620" marker-end="url(#crow)"/>
+            <path d="M 920 500 H 880" marker-end="url(#crow)"/>
+            <path d="M 740 220 V 300 H 1050 V 420" marker-end="url(#crow)"/>
+            <path d="M 280 500 H 320" />
+          </g>
+
+          <!-- ======== TOP ROW ======== -->
+          <g class="node" font-family="'JetBrains Mono', monospace">
+            <rect x="30" y="40" width="260" height="180" rx="10" class="node-bg"/>
+            <text x="48" y="70" class="node-title">categories</text>
+            <text x="254" y="70" class="node-rows" text-anchor="end">6 rows</text>
+            <line x1="30" y1="86" x2="290" y2="86" class="node-rule"/>
+            <circle cx="48" cy="106" r="5" class="pk"/>
+            <text x="62" y="111" class="col">id <tspan class="type">integer</tspan></text>
+            <text x="62" y="137" class="col">name <tspan class="type">text</tspan></text>
+            <text x="62" y="163" class="col">description <tspan class="type">text</tspan></text>
+            <text x="62" y="189" class="col">is_online <tspan class="type">integer</tspan></text>
+          </g>
+
+          <g class="node" font-family="'JetBrains Mono', monospace">
+            <rect x="320" y="40" width="260" height="180" rx="10" class="node-bg"/>
+            <text x="338" y="70" class="node-title">suppliers</text>
+            <text x="544" y="70" class="node-rows" text-anchor="end">5 rows</text>
+            <line x1="320" y1="86" x2="580" y2="86" class="node-rule"/>
+            <circle cx="338" cy="106" r="5" class="pk"/>
+            <text x="352" y="111" class="col">id <tspan class="type">integer</tspan></text>
+            <text x="352" y="137" class="col">name <tspan class="type">text</tspan></text>
+            <text x="352" y="163" class="col">contact_name <tspan class="type">text</tspan></text>
+            <text x="352" y="189" class="col">lead_days <tspan class="type">integer</tspan></text>
+          </g>
+
+          <g class="node" font-family="'JetBrains Mono', monospace">
+            <rect x="610" y="40" width="260" height="180" rx="10" class="node-bg"/>
+            <text x="628" y="70" class="node-title">customers</text>
+            <text x="834" y="70" class="node-rows" text-anchor="end">18 rows</text>
+            <line x1="610" y1="86" x2="870" y2="86" class="node-rule"/>
+            <circle cx="628" cy="106" r="5" class="pk"/>
+            <text x="642" y="111" class="col">id <tspan class="type">integer</tspan></text>
+            <text x="642" y="137" class="col">first_name <tspan class="type">text</tspan></text>
+            <text x="642" y="163" class="col">loyalty_member <tspan class="type">integer</tspan></text>
+            <text x="642" y="189" class="col">city <tspan class="type">text</tspan></text>
+          </g>
+
+          <g class="node" font-family="'JetBrains Mono', monospace">
+            <rect x="900" y="40" width="260" height="180" rx="10" class="node-bg"/>
+            <text x="918" y="70" class="node-title">expenses</text>
+            <text x="1124" y="70" class="node-rows" text-anchor="end">21 rows</text>
+            <line x1="900" y1="86" x2="1160" y2="86" class="node-rule"/>
+            <circle cx="918" cy="106" r="5" class="pk"/>
+            <text x="932" y="111" class="col">id <tspan class="type">integer</tspan></text>
+            <text x="932" y="137" class="col">category <tspan class="type">text</tspan></text>
+            <text x="932" y="163" class="col">amount_cents <tspan class="type">integer</tspan></text>
+            <text x="932" y="189" class="col">spent_on <tspan class="type">text</tspan></text>
+          </g>
+
+          <!-- ======== BOTTOM ROW ======== -->
+          <g class="node" font-family="'JetBrains Mono', monospace">
+            <rect x="20" y="420" width="260" height="206" rx="10" class="node-bg"/>
+            <text x="38" y="450" class="node-title">inventory</text>
+            <text x="244" y="450" class="node-rows" text-anchor="end">14 rows</text>
+            <line x1="20" y1="466" x2="280" y2="466" class="node-rule"/>
+            <circle cx="38" cy="486" r="5" class="pk"/><circle cx="38" cy="486" r="9" class="fk-ring"/>
+            <text x="56" y="491" class="col">product_id <tspan class="type">fk&middot;pk</tspan></text>
+            <text x="56" y="517" class="col">qty_on_hand <tspan class="type">integer</tspan></text>
+            <text x="56" y="543" class="col">reorder_level <tspan class="type">integer</tspan></text>
+            <text x="56" y="569" class="col">last_restocked <tspan class="type">text</tspan></text>
+          </g>
+
+          <g class="node" font-family="'JetBrains Mono', monospace">
+            <rect x="320" y="420" width="260" height="206" rx="10" class="node-bg"/>
+            <text x="338" y="450" class="node-title">products</text>
+            <text x="544" y="450" class="node-rows" text-anchor="end">14 rows</text>
+            <line x1="320" y1="466" x2="580" y2="466" class="node-rule"/>
+            <circle cx="338" cy="486" r="5" class="pk"/>
+            <text x="352" y="491" class="col">id <tspan class="type">integer</tspan></text>
+            <text x="352" y="517" class="col">sku <tspan class="type">text</tspan></text>
+            <text x="352" y="543" class="col">name <tspan class="type">text</tspan></text>
+            <circle cx="338" cy="559" r="5" class="fk"/>
+            <text x="352" y="569" class="col">category_id <tspan class="type">fk</tspan></text>
+            <circle cx="338" cy="585" r="5" class="fk"/>
+            <text x="352" y="595" class="col">supplier_id <tspan class="type">fk</tspan></text>
+          </g>
+
+          <g class="node" font-family="'JetBrains Mono', monospace">
+            <rect x="620" y="420" width="260" height="206" rx="10" class="node-bg"/>
+            <text x="638" y="450" class="node-title">order_items</text>
+            <text x="844" y="450" class="node-rows" text-anchor="end">129 rows</text>
+            <line x1="620" y1="466" x2="880" y2="466" class="node-rule"/>
+            <circle cx="638" cy="486" r="5" class="pk"/>
+            <text x="652" y="491" class="col">id <tspan class="type">integer</tspan></text>
+            <circle cx="638" cy="512" r="5" class="fk"/>
+            <text x="652" y="517" class="col">order_id <tspan class="type">fk</tspan></text>
+            <circle cx="638" cy="538" r="5" class="fk"/>
+            <text x="652" y="543" class="col">product_id <tspan class="type">fk</tspan></text>
+            <text x="652" y="569" class="col">qty <tspan class="type">integer</tspan></text>
+            <text x="652" y="595" class="col">price_cents <tspan class="type">integer</tspan></text>
+          </g>
+
+          <g class="node" font-family="'JetBrains Mono', monospace">
+            <rect x="920" y="420" width="260" height="206" rx="10" class="node-bg"/>
+            <text x="938" y="450" class="node-title">orders</text>
+            <text x="1144" y="450" class="node-rows" text-anchor="end">66 rows</text>
+            <line x1="920" y1="466" x2="1180" y2="466" class="node-rule"/>
+            <circle cx="938" cy="486" r="5" class="pk"/>
+            <text x="952" y="491" class="col">id <tspan class="type">integer</tspan></text>
+            <circle cx="938" cy="512" r="5" class="fk"/>
+            <text x="952" y="517" class="col">customer_id <tspan class="type">fk</tspan></text>
+            <text x="952" y="543" class="col">channel <tspan class="type">text</tspan></text>
+            <text x="952" y="569" class="col">status <tspan class="type">text</tspan></text>
+            <text x="952" y="595" class="col">placed_at <tspan class="type">text</tspan></text>
+          </g>
+        </svg>
+        <p class="er-hint">Scroll sideways to explore the full diagram</p>
+      </div>
+
+      <ul class="legend reveal">
+        <li><span class="dot pk-dot"></span> Primary key</li>
+        <li><span class="dot fk-dot"></span> Foreign key</li>
+        <li><span class="dot line-dot"></span> One-to-many relationship</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ QUERIES ============ -->
+  <section class="queries" id="queries">
+    <div class="wrap">
+      <p class="kicker reveal">Ask anything</p>
+      <h2 class="reveal">Real SQL. <em>Real answers.</em></h2>
+      <p class="section-lede reveal">
+        Three of the ten reports, exactly as they appear in
+        <code>queries.sql</code> — with the results they actually return.
+      </p>
+
+      <div class="tabs reveal" role="tablist" aria-label="Sample queries">
+        <button class="tab is-active" role="tab" aria-selected="true" data-tab="q4">Profit by category</button>
+        <button class="tab" role="tab" aria-selected="false" data-tab="q2">Top products</button>
+        <button class="tab" role="tab" aria-selected="false" data-tab="q9">Busiest hours</button>
+      </div>
+
+      <article class="query-panel is-active reveal" id="panel-q4" role="tabpanel">
+        <p class="query-q">&ldquo;Which part of the business actually makes money?&rdquo;</p>
+        <div class="query-grid stack">
+          <div class="code-scroll">
+<pre class="code"><code>SELECT c.name AS category,
+       printf('$%.2f', SUM(oi.qty * oi.price_cents) / 100.0) AS revenue,
+       printf('$%.2f', SUM(oi.qty * p.cost_cents)   / 100.0) AS cost,
+       printf('$%.2f', SUM(oi.qty * (oi.price_cents - p.cost_cents)) / 100.0) AS gross_profit,
+       printf('%.1f%%', 100.0 * SUM(oi.qty * (oi.price_cents - p.cost_cents))
+                      / SUM(oi.qty * oi.price_cents)) AS margin
+FROM order_items oi
+JOIN products p   ON p.id = oi.product_id
+JOIN categories c ON c.id = p.category_id
+JOIN orders o     ON o.id = oi.order_id
+WHERE o.status = 'completed'
+GROUP BY c.id, c.name
+ORDER BY SUM(oi.qty * (oi.price_cents - p.cost_cents)) DESC;</code></pre>
+          </div>
+          <div class="table-scroll">
+            <table>
+              <caption>Result &mdash; profit by category</caption>
+              <thead><tr><th>Category</th><th>Revenue</th><th>Cost</th><th>Gross profit</th><th>Margin</th></tr></thead>
+              <tbody>
+                <tr><td>Retail Coffee Beans</td><td>$790.00</td><td>$288.10</td><td>$501.90</td><td>63.5%</td></tr>
+                <tr><td>Merchandise</td><td>$440.00</td><td>$90.00</td><td>$350.00</td><td>79.5%</td></tr>
+                <tr><td>Espresso Drinks</td><td>$212.25</td><td>$59.20</td><td>$153.05</td><td>72.1%</td></tr>
+                <tr><td>Brewing Equipment</td><td>$298.00</td><td>$145.00</td><td>$153.00</td><td>51.3%</td></tr>
+                <tr><td>Pastries &amp; Food</td><td>$76.25</td><td>$30.50</td><td>$45.75</td><td>60.0%</td></tr>
+                <tr><td>Filter &amp; Pour Over</td><td>$32.50</td><td>$8.30</td><td>$24.20</td><td>74.5%</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <p class="query-note">The surprise: merchandise earns nearly as much gross profit as espresso drinks — at a 79.5% margin.</p>
+      </article>
+
+      <article class="query-panel reveal" id="panel-q2" role="tabpanel" hidden>
+        <p class="query-q">&ldquo;What should we promote, keep in stock, and never run out of?&rdquo;</p>
+        <div class="query-grid">
+          <div class="code-scroll">
+<pre class="code"><code>SELECT p.name,
+       printf('$%.2f', SUM(oi.qty * oi.price_cents) / 100.0) AS revenue,
+       SUM(oi.qty) AS units_sold
+FROM order_items oi
+JOIN products p ON p.id = oi.product_id
+JOIN orders o   ON o.id = oi.order_id
+WHERE o.status = 'completed'
+GROUP BY p.id, p.name
+ORDER BY SUM(oi.qty * oi.price_cents) DESC
+LIMIT 5;</code></pre>
+          </div>
+          <div class="table-scroll">
+            <table>
+              <caption>Result &mdash; top 5 products by revenue</caption>
+              <thead><tr><th>Product</th><th>Revenue</th><th>Units sold</th></tr></thead>
+              <tbody>
+                <tr><td>Ethiopia Yirgacheffe (12 oz)</td><td>$286.00</td><td>13</td></tr>
+                <tr><td>House Blend Beans (12 oz)</td><td>$270.00</td><td>15</td></tr>
+                <tr><td>Chemex Classic (6-cup)</td><td>$270.00</td><td>6</td></tr>
+                <tr><td>Insulated Travel Tumbler</td><td>$240.00</td><td>10</td></tr>
+                <tr><td>Espresso Roast Beans (12 oz)</td><td>$234.00</td><td>12</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <p class="query-note">Retail bags dominate the top five — the online store earns its shelf space.</p>
+      </article>
+
+      <article class="query-panel reveal" id="panel-q9" role="tabpanel" hidden>
+        <p class="query-q">&ldquo;When should we schedule extra staff — and when can we run lean?&rdquo;</p>
+        <div class="query-grid">
+          <div class="code-scroll">
+<pre class="code"><code>SELECT strftime('%H:00', placed_at) AS hour,
+       COUNT(*) AS orders,
+       printf('$%.2f', SUM(oi.qty * oi.price_cents) / 100.0) AS revenue
+FROM orders o
+JOIN order_items oi ON oi.order_id = o.id
+WHERE o.status = 'completed' AND o.channel = 'in-store'
+GROUP BY hour
+ORDER BY orders DESC;</code></pre>
+          </div>
+          <div class="table-scroll">
+            <table>
+              <caption>Result &mdash; busiest in-store hours</caption>
+              <thead><tr><th>Hour</th><th>Orders</th><th>Revenue</th></tr></thead>
+              <tbody>
+                <tr><td>17:00</td><td>13</td><td>$72.00</td></tr>
+                <tr><td>08:00</td><td>13</td><td>$91.25</td></tr>
+                <tr><td>09:00</td><td>11</td><td>$120.50</td></tr>
+                <tr><td>11:00</td><td>8</td><td>$69.25</td></tr>
+                <tr><td>16:00</td><td>7</td><td>$63.25</td></tr>
+                <tr><td>15:00</td><td>6</td><td>$42.00</td></tr>
+                <tr><td>13:00</td><td>5</td><td>$21.00</td></tr>
+                <tr><td>12:00</td><td>4</td><td>$21.25</td></tr>
+                <tr><td>10:00</td><td>4</td><td>$32.00</td></tr>
+                <tr><td>14:00</td><td>3</td><td>$33.50</td></tr>
+                <tr><td>07:00</td><td>3</td><td>$14.75</td></tr>
+                <tr><td>18:00</td><td>2</td><td>$9.50</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <p class="query-note">Two rushes: the 8&ndash;9am commute and the 5pm wind-down. Staff accordingly.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- ============ TEN QUESTIONS ============ -->
+  <section class="questions" id="questions">
+    <div class="wrap">
+      <p class="kicker reveal">The deliverable</p>
+      <h2 class="reveal">Ten questions. <em>Zero spreadsheets.</em></h2>
+      <p class="section-lede reveal">Every query ships ready to run — copy, paste, answer.</p>
+      <ol class="q-list">
+        <li class="reveal"><span class="q-num">01</span><span class="q-text">Daily revenue, last 30 days — <em>are we trending up or down?</em></span></li>
+        <li class="reveal"><span class="q-num">02</span><span class="q-text">Top 5 products by revenue — <em>what should we never run out of?</em></span></li>
+        <li class="reveal"><span class="q-num">03</span><span class="q-text">Low-stock alert — <em>what needs reordering this week?</em></span></li>
+        <li class="reveal"><span class="q-num">04</span><span class="q-text">Profit by category — <em>which part of the business actually makes money?</em></span></li>
+        <li class="reveal"><span class="q-num">05</span><span class="q-text">Repeat-customer rate — <em>are people coming back?</em></span></li>
+        <li class="reveal"><span class="q-num">06</span><span class="q-text">Slowest-moving products — <em>what&rsquo;s gathering dust?</em></span></li>
+        <li class="reveal"><span class="q-num">07</span><span class="q-text">Monthly revenue vs. expenses — <em>what did each month actually earn?</em></span></li>
+        <li class="reveal"><span class="q-num">08</span><span class="q-text">Best customers by lifetime value — <em>who are our VIPs?</em></span></li>
+        <li class="reveal"><span class="q-num">09</span><span class="q-text">Busiest hours of the day — <em>when do we need extra staff?</em></span></li>
+        <li class="reveal"><span class="q-num">10</span><span class="q-text">Online vs. in-store revenue split — <em>is the webshop pulling its weight?</em></span></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ============ TECH ============ -->
+  <section class="tech">
+    <div class="wrap split">
+      <div class="reveal">
+        <p class="kicker">Under the hood</p>
+        <h2>SQLite. Zero servers. <em>Zero cost.</em></h2>
+        <p>
+          A full SQL database in a single file — no server to install, no
+          hosting bill. The SQL is standard and portable: when the business
+          grows, it moves to PostgreSQL or MySQL untouched.
+        </p>
+      </div>
+      <div class="code-scroll reveal">
+<pre class="code"><code>$ sqlite3 shop.db &lt; schema.sql   # create the tables
+$ sqlite3 shop.db &lt; seed.sql     # load the demo data
+$ sqlite3 shop.db &lt; queries.sql  # run all 10 reports</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CONTACT ============ -->
+  <section class="contact" id="contact">
+    <div class="wrap">
+      <p class="kicker reveal">Your turn</p>
+      <h2 class="reveal">Have data?<br /><em>Let&rsquo;s design it.</em></h2>
+      <p class="lede reveal">
+        I&rsquo;ll map your business into a clean database and hand you the
+        reports you&rsquo;ll actually run — like the ten above.
+      </p>
+      <a class="btn btn-primary reveal" href="mailto:hello@example.com?subject=Database%20design%20project">Design my database</a>
+      <p class="contact-note reveal">Tell me about your business — I&rsquo;ll reply with a plan and a fixed price.</p>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>Bean &amp; Roast Co. is a demo business built for this portfolio piece.</p>
+    <p>&copy; 2026 Samson. Database design &middot; SQL reporting.</p>
+  </div>
+</footer>
+
+<script src="showcase.js"></script>
+</body>
+</html>
